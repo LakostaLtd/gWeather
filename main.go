@@ -80,6 +80,9 @@ func GetCity(name string) (City, error) {
 }
 
 func main() {
+	fmt.Printf("gWeather v%s", Version)
+	fmt.Println("")
+
 	if len(os.Args) < 2 {
 		fmt.Println("Использование: gweather <город>")
 		return
