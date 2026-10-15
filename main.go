@@ -83,6 +83,7 @@ func main() {
 	fmt.Printf("gWeather v%s", Version)
 	fmt.Println("")
 
+	// Проверка аргументов
 	if len(os.Args) < 2 {
 		fmt.Println("Использование: gweather <город>")
 		return
