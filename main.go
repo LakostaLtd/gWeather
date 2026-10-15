@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 const Version = "0.1.2"
@@ -41,6 +43,26 @@ type CurrentUnits struct {
 type Response struct {
 	Current      Current      `json:"current"`
 	CurrentUnits CurrentUnits `json:"current_units"`
+}
+
+func GetDefaultCity() (string, error) {
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		return "", err
+	}
+
+	ConfPath := filepath.Join(dir, "gweather", "config")
+	FullConfigName, err := os.ReadFile(ConfPath)
+	if err != nil {
+		return "", err
+	}
+
+	CName := strings.TrimSpace(string(FullConfigName))
+	if CName == "" {
+		return "", fmt.Errorf("конфигурационный файл не содержит название города")
+	}
+
+	return CName, nil
 }
 
 func GetCity(name string) (City, error) {
@@ -80,16 +102,24 @@ func GetCity(name string) (City, error) {
 }
 
 func main() {
+	var cityName string
+
 	fmt.Printf("gWeather v%s", Version)
 	fmt.Println("")
 
 	// Проверка аргументов
 	if len(os.Args) < 2 {
-		fmt.Println("Использование: gweather <город>")
-		return
+		cName, er := GetDefaultCity()
+		if er != nil {
+			fmt.Println(er)
+			return
+		}
+		cityName = cName
+	} else {
+		cityName = os.Args[1]
 	}
 	// Получаем наименование города из аргументов
-	city, e := GetCity(os.Args[1])
+	city, e := GetCity(cityName)
 	if e != nil {
 		fmt.Println(e)
 		return
