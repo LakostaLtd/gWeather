@@ -88,6 +88,7 @@ func main() {
 		fmt.Println("Использование: gweather <город>")
 		return
 	}
+	// Получаем наименование города из аргументов
 	city, e := GetCity(os.Args[1])
 	if e != nil {
 		fmt.Println(e)
